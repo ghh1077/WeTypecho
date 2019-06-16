@@ -36,7 +36,7 @@ Page({
       nickName: e.nickName,
       thumb: e.thumb,
       title: e.title,
-      path: e.path+"?cid="+e.cid,
+      path: e.path+"?item="+e.cid,
     })
     that.share();
   },
@@ -97,7 +97,7 @@ Page({
                 views: [
                   {
                     type: 'image',
-                    url: API.GetDomain() +'usr/plugins/WeTypecho/res/cvbg.jpeg',
+                    url: '/resources/cvbg.jpeg',
                     top: 0,
                     left: 0,
                     width: 375,
@@ -167,7 +167,7 @@ Page({
                   }
                 ]
               }
-            })          
+            })
           }
       }
     })
@@ -199,4 +199,3 @@ Page({
   })
   },
 })
-

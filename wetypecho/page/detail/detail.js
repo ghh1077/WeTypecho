@@ -43,7 +43,8 @@ Page({
     qrcode_temp: '',
     painting: {},
     cmbtnclick: false,
-    resendUrl: API.GetDomain() + 'usr/plugins/WeTypecho/res/resend.png'
+    related_post:[],
+    display_related: 'none',
   },
 
   /**
@@ -51,14 +52,13 @@ Page({
    */
   onLoad (options) {
     this.data.cid = options.item;
-    this.getdetails(options.item);
   },
-  eventRun_bind_tap (event) {
+  __bind_tap (event) {
     var href = event.target.dataset._el.attr.href;
     if(API.IsNull(href)) {
       var cidaddr = href.search('cid=');
       if( -1 != href.search(API.GetDomain()) && -1 != cidaddr ) {
-        
+
           var end = href.search('.html');
           var cid = href.substring(cidaddr+4,end);
           wx.navigateTo({
@@ -78,6 +78,7 @@ Page({
       }
     }
   },
+  //获取文章详细
   getdetails(cid) {
     var that = this;
     Net.request({
@@ -89,20 +90,43 @@ Page({
         let data_parse = app.towxml.toJson(data,'markdown');
         that.setData({
           content: data_parse,
-          item: parsed_item
+          item: parsed_item,
         })
         //发布时间
         that.data.createdtime = API.getcreatedtime(parsed_item.created);
         that.setData({
           createdtime: that.data.createdtime
         })
+        //获取相关文章
+        that.fetchpostbymid(that.data.item.mid)
       }
     })
     //获取文章评论
     this.getcomments(cid);
     //获取点赞列表
     this.getlikelist(cid);
-    //获取文章详细
+  },
+  fetchpostbymid(mid) {
+    var that = this;
+    Net.request({
+      url: API.GetPostsbyMIDLimit(mid,3,that.data.item.cid),
+      success: function(res) {
+        var datas = res.data.data;
+        if(datas != null && datas!=undefined) {
+            that.data.related_post = datas.map(function (item){
+            item.posttime = API.getcreatedtime(item.created);
+            return item;
+          });
+          if(that.data.related_post.length>0){
+          that.setData({
+            display_related: 'block',
+            related_post: that.data.related_post,
+            postheight: that.data.related_post.length * 180 + 'rpx'
+          })
+        }
+        }
+      }
+    })
   },
   getlikelist(cid) {
     var that = this;
@@ -138,7 +162,7 @@ Page({
                   return item;
                 })
               })
-          } else {          
+          } else {
             that.setData({
               likelist: []
             })
@@ -182,6 +206,7 @@ Page({
    */
   onShow () {
     var that = this;
+    this.getdetails(that.data.cid);
     if( API.loginsuccess(app)) {
       Net.request({
         url: API.Getuserlikedinfo(that.data.cid,app.Data.userInfo.openid),
@@ -368,4 +393,3 @@ Page({
     })
   }
 })
-

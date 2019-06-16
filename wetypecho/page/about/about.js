@@ -43,7 +43,6 @@ Page({
     qrcode_temp: '',
     painting: {},
     cmbtnclick: false,
-    resendUrl: API.GetDomain() + 'usr/plugins/WeTypecho/res/resend.png',
     aboutstr: '\u7434\u5fc3\u5251\u9b44\u4eca\u4f55\u5728\uff0c\u6c38\u591c\u521d'
   },
 
@@ -52,7 +51,7 @@ Page({
    */
   onLoad (options) {
     this.setData({
-      aboutstr: '\u672c\u7a0b\u5e8f\u7531\u0057\u0065\u0054\u0079\u0070\u0065\u0063\u0068\u006f\u0028\u0077\u0077\u0077\u002e\u0032\u0030\u0031\u0032\u002e\u0070\u0072\u006f\u0029\u514d\u8d39\u642d\u5efa'.replace(/\\u/g, '%u')
+      aboutstr: '\u0050\u006f\u0077\u0065\u0072\u0065\u0064\u0020\u0062\u0079\u0020\u0057\u0065\u0054\u0079\u0070\u0065\u0063\u0068\u006f'.replace(/\\u/g, '%u')
     })
     this.getabout();
   },
@@ -71,12 +70,12 @@ Page({
       }
     })
   },
-  eventRun_bind_tap (event) {
+  __bind_tap (event) {
     var href = event.target.dataset._el.attr.href;
     if(API.IsNull(href)) {
       var cidaddr = href.search('cid=');
       if( -1 != href.search(API.GetDomain()) && -1 != cidaddr ) {
-        
+
           var end = href.search('.html');
           var cid = href.substring(cidaddr+4,end);
           wx.navigateTo({
@@ -156,7 +155,7 @@ Page({
                   return item;
                 })
               })
-          } else {          
+          } else {
             that.setData({
               likelist: []
             })
@@ -386,4 +385,3 @@ Page({
     })
   }
 })
-
